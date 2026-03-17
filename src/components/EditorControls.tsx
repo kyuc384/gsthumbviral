@@ -251,8 +251,8 @@ export const EditorControls: React.FC<EditorControlsProps> = ({ config, onChange
                <>
                  <ColorSelector label="Bg Color" selected={config[bgColorKey] as string} onSelect={(c) => onChange({ [bgColorKey]: c })} />
                  <div className="grid grid-cols-2 gap-4">
-                    <Slider label="Pad X" value={config[bgPadXKey] as number} min={0} max={100} onChange={(v) => onChange({ [bgPadXKey]: v })} />
-                    <Slider label="Pad Y" value={config[bgPadYKey] as number} min={0} max={100} onChange={(v) => onChange({ [bgPadYKey]: v })} />
+                    <Slider label="Pad X" value={config[bgPadXKey] as number} min={0} max={100} onChange={(v) => onChange({ [bgPadXKey]: v })} showInput={true} unit="px" />
+                    <Slider label="Pad Y" value={config[bgPadYKey] as number} min={0} max={100} onChange={(v) => onChange({ [bgPadYKey]: v })} showInput={true} unit="px" />
                  </div>
                </>
              )}
@@ -271,8 +271,8 @@ export const EditorControls: React.FC<EditorControlsProps> = ({ config, onChange
              {config[showShadowKey] && (
                <>
                  <div className="grid grid-cols-2 gap-4">
-                   <Slider label="Blur" value={config[shadowBlurKey] as number} min={0} max={30} onChange={(v) => onChange({ [shadowBlurKey]: v })} />
-                   <Slider label="Dist" value={config[shadowOffsetKey] as number} min={0} max={20} onChange={(v) => onChange({ [shadowOffsetKey]: v })} />
+                   <Slider label="Blur" value={config[shadowBlurKey] as number} min={0} max={30} onChange={(v) => onChange({ [shadowBlurKey]: v })} showInput={true} unit="px" />
+                   <Slider label="Dist" value={config[shadowOffsetKey] as number} min={0} max={20} onChange={(v) => onChange({ [shadowOffsetKey]: v })} showInput={true} unit="px" />
                  </div>
                  <ColorSelector label="Shadow Color" selected={config[shadowColorKey] as string} onSelect={(c) => onChange({ [shadowColorKey]: c })} />
                </>
