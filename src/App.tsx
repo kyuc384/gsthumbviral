@@ -317,10 +317,11 @@ const App: React.FC = () => {
     const pos = c[`${prefix}Position` as keyof ThumbnailConfig] as {x: number, y: number};
     const rotation = c[`${prefix}Rotation` as keyof ThumbnailConfig] as number;
 
+    const translateX = align === 'left' ? '-100' : align === 'right' ? '0' : '-50';
     return {
       position: 'absolute' as const,
       left: `${pos.x}%`, top: `${pos.y}%`,
-      transform: `translate(-50%, -50%) rotate(${rotation}deg)`,
+      transform: `translate(${translateX}%, -50%) rotate(${rotation}deg)`,
       fontFamily: c.fontFamily,
       fontSize: `${fSize * previewScale}px`,
       WebkitTextStroke: `${strokeW * previewScale}px ${strokeC}`,
