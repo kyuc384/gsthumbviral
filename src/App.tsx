@@ -175,6 +175,20 @@ const App: React.FC = () => {
     });
   };
 
+  const applyToLine = (line: 1 | 2 | 3, text: string) => {
+    const updates: Partial<ThumbnailConfig> = {};
+    if (line === 1) updates.line1Text = text.toUpperCase();
+    if (line === 2) {
+      updates.line2Text = text.toUpperCase();
+      updates.showLine2 = true;
+    }
+    if (line === 3) {
+      updates.line3Text = text.toUpperCase();
+      updates.showLine3 = true;
+    }
+    updateConfig(updates);
+  };
+
   const handleMouseDown = (e: React.MouseEvent, line: 'line1' | 'line2' | 'line3') => {
     const ref = lineRefs[line].current;
     if (!ref || !containerRef.current) return;
@@ -490,24 +504,37 @@ const App: React.FC = () => {
                   {language === 'Vietnamese' ? 'Tiêu đề đề xuất' : 'Suggested Titles'}
                 </p>
                 {suggestions.titles.map((title, i) => (
-                  <div key={i} className="flex gap-2 group relative">
-                    <button 
-                      onClick={() => applyTitleSuggestion(title)} 
-                      className="flex-1 text-left p-4 rounded-xl bg-slate-950/50 border border-slate-800 hover:border-indigo-500 hover:bg-indigo-500/5 transition-all text-[12px] font-black uppercase leading-tight"
-                    >
-                      {title}
-                    </button>
-                    <button 
-                      onClick={() => handleCopyText(title, i, 'title')}
-                      className={`shrink-0 w-12 flex items-center justify-center rounded-xl border transition-all ${copyTitleStatus === i ? 'bg-green-600/20 border-green-500 text-green-400' : 'bg-slate-950/50 border-slate-800 text-slate-500 hover:text-white hover:border-indigo-500'}`}
-                      title="Copy title"
-                    >
-                      {copyTitleStatus === i ? (
-                        <span className="text-[8px] font-black">OK!</span>
-                      ) : (
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>
-                      )}
-                    </button>
+                  <div key={i} className="flex flex-col gap-2 group relative">
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={() => applyTitleSuggestion(title)} 
+                        className="flex-1 text-left p-4 rounded-xl bg-slate-950/50 border border-slate-800 hover:border-indigo-500 hover:bg-indigo-500/5 transition-all text-[12px] font-black uppercase leading-tight"
+                      >
+                        {title}
+                      </button>
+                      <button 
+                        onClick={() => handleCopyText(title, i, 'title')}
+                        className={`shrink-0 w-12 flex items-center justify-center rounded-xl border transition-all ${copyTitleStatus === i ? 'bg-green-600/20 border-green-500 text-green-400' : 'bg-slate-950/50 border-slate-800 text-slate-500 hover:text-white hover:border-indigo-500'}`}
+                        title="Copy title"
+                      >
+                        {copyTitleStatus === i ? (
+                          <span className="text-[8px] font-black">OK!</span>
+                        ) : (
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>
+                        )}
+                      </button>
+                    </div>
+                    <div className="flex gap-2 px-1">
+                      {[1, 2, 3].map(num => (
+                        <button
+                          key={num}
+                          onClick={() => applyToLine(num as 1|2|3, title)}
+                          className="flex-1 py-1.5 rounded-lg bg-slate-800/40 border border-slate-800 text-[10px] font-black text-slate-400 hover:bg-indigo-600 hover:text-white hover:border-indigo-500 transition-all"
+                        >
+                          L{num}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 ))}
               </div>
