@@ -260,7 +260,8 @@ const App: React.FC = () => {
                ctx.fillStyle = bgColor;
                let rx = 0;
                if (align === 'center') rx = -textWidth / 2; else if (align === 'right') rx = -textWidth;
-               ctx.fillRect(rx - bgPadX, -fontSize/2 - bgPadY, textWidth + bgPadX * 2, fontSize + bgPadY * 2);
+               const bgHeight = fontSize * 1.2;
+               ctx.fillRect(rx - bgPadX, -bgHeight / 2 - bgPadY, textWidth + bgPadX * 2, bgHeight + bgPadY * 2);
             }
             if (showShadow) { ctx.shadowColor = sColor; ctx.shadowBlur = sBlur; ctx.shadowOffsetX = sOffset; ctx.shadowOffsetY = sOffset; }
             if (isGrad) { const grad = ctx.createLinearGradient(0, -fontSize/2, 0, fontSize/2); grad.addColorStop(0, color); grad.addColorStop(1, color2); ctx.fillStyle = grad; } else { ctx.fillStyle = color; }
