@@ -2,7 +2,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { AppStatus, SuggestionResponse, ThumbnailConfig } from './types';
 import { DEFAULT_CONFIG } from './constants';
-import { analyzeScript, generateThumbnailImage } from './services/geminiService';
+import { analyzeScript, generateThumbnailImage, editImageToRemoveText } from './services/geminiService';
 import { EditorControls } from './components/EditorControls';
 
 const App: React.FC = () => {
@@ -129,6 +129,20 @@ const App: React.FC = () => {
       setStatus(AppStatus.READY);
     } catch (err) {
       setError(language === 'Vietnamese' ? 'Vẽ ảnh thất bại.' : 'Failed to generate image.');
+      setStatus(AppStatus.READY);
+    }
+  };
+
+  const handleRemoveText = async () => {
+    if (!config.imageUrl) return;
+    setStatus(AppStatus.EDITING_IMAGE);
+    setError(null);
+    try {
+      const url = await editImageToRemoveText(config.imageUrl);
+      updateConfig({ imageUrl: url });
+      setStatus(AppStatus.READY);
+    } catch (err) {
+      setError(language === 'Vietnamese' ? 'Xoá chữ thất bại.' : 'Failed to remove text.');
       setStatus(AppStatus.READY);
     }
   };
@@ -390,13 +404,24 @@ const App: React.FC = () => {
                       {language === 'Vietnamese' ? 'TẢI ẢNH LÊN' : 'UPLOAD IMAGE'}
                     </button>
                     {config.imageUrl && (
-                      <button 
-                        onClick={() => updateConfig({ imageUrl: null })}
-                        className="px-4 bg-red-600/10 hover:bg-red-600/20 text-red-500 rounded-2xl border border-red-500/20 transition-all flex items-center justify-center"
-                        title={language === 'Vietnamese' ? 'Xoá ảnh' : 'Remove background'}
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                      </button>
+                      <>
+                        <button 
+                          onClick={handleRemoveText}
+                          disabled={status === AppStatus.EDITING_IMAGE}
+                          className="px-4 bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-400 rounded-2xl border border-indigo-500/20 transition-all flex items-center justify-center gap-2 font-bold text-xs"
+                          title={language === 'Vietnamese' ? 'Xoá chữ trong ảnh' : 'Remove text from image'}
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                          <span className="hidden sm:inline">{language === 'Vietnamese' ? 'XOÁ CHỮ' : 'REMOVE TEXT'}</span>
+                        </button>
+                        <button 
+                          onClick={() => updateConfig({ imageUrl: null })}
+                          className="px-4 bg-red-600/10 hover:bg-red-600/20 text-red-500 rounded-2xl border border-red-500/20 transition-all flex items-center justify-center"
+                          title={language === 'Vietnamese' ? 'Xoá ảnh' : 'Remove background'}
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </button>
+                      </>
                     )}
                   </div>
                   <input type="file" ref={fileInputRef} onChange={handleImageUpload} className="hidden" accept="image/*" />
@@ -436,6 +461,14 @@ const App: React.FC = () => {
                   <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4"></div>
                   <div className="text-white font-black uppercase tracking-widest text-xs animate-pulse">
                     {language === 'Vietnamese' ? 'AI ĐANG VẼ ẢNH...' : 'AI IS GENERATING IMAGE...'}
+                  </div>
+                </div>
+              )}
+              {status === AppStatus.EDITING_IMAGE && (
+                <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-md flex flex-col items-center justify-center z-[60]">
+                  <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+                  <div className="text-white font-black uppercase tracking-widest text-xs animate-pulse">
+                    {language === 'Vietnamese' ? 'AI ĐANG XOÁ CHỮ...' : 'AI IS REMOVING TEXT...'}
                   </div>
                 </div>
               )}

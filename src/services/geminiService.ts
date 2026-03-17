@@ -75,3 +75,40 @@ export const generateThumbnailImage = async (prompt: string): Promise<string> =>
   
   throw new Error("No image generated");
 };
+
+// Edit image to remove text
+export const editImageToRemoveText = async (base64Image: string): Promise<string> => {
+  // Always initialize a fresh client instance before making an API call.
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  
+  // Extract mimeType and data from base64 string
+  const matches = base64Image.match(/^data:([^;]+);base64,(.+)$/);
+  if (!matches) throw new Error("Invalid image format");
+  const mimeType = matches[1];
+  const data = matches[2];
+
+  const response = await ai.models.generateContent({
+    model: 'gemini-2.5-flash-image',
+    contents: {
+      parts: [
+        {
+          inlineData: {
+            data,
+            mimeType,
+          },
+        },
+        {
+          text: 'Please remove all text, titles, and watermarks from this image. Fill in the areas where text was removed with realistic background textures that match the surroundings. The output should be a clean background image without any text.',
+        },
+      ],
+    },
+  });
+
+  // Correctly iterate through parts to find the image part
+  const part = response.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
+  if (part?.inlineData) {
+    return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+  }
+  
+  throw new Error("Failed to edit image");
+};
