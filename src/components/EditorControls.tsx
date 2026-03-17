@@ -234,7 +234,7 @@ export const EditorControls: React.FC<EditorControlsProps> = ({ config, onChange
 
           <div className="grid grid-cols-2 gap-4">
             <Slider label="Size" value={config[sizeKey] as number} min={20} max={300} onChange={(v) => onChange({ [sizeKey]: v })} showInput={true} unit="px" />
-            <Slider label="Stroke" value={config[strokeWKey] as number} min={0} max={10} step={0.5} onChange={(v) => onChange({ [strokeWKey]: v })} />
+            <Slider label="Stroke" value={config[strokeWKey] as number} min={0} max={10} step={0.5} onChange={(v) => onChange({ [strokeWKey]: v })} showInput={true} unit="px" />
           </div>
 
           <div className="bg-slate-900/40 p-3 rounded-lg border border-slate-800/60 space-y-3">
